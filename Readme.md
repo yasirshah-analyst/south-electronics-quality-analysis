@@ -232,6 +232,10 @@ South-Electronics-Quality-Analysis
 ├── clean_data.csv
 └── README.md
 ```
-
 ## 👤 Author
-Yasir Shah — [@yasirshah-analyst](https://github.com/yasirshah-analyst)
+
+Yasir Shah | Data Analyst | SQL | Power BI | Excel
+
+- www.linkedin.com/in/yasir-shah-2364183b3
+- https://github.com/yasirshah-analyst
+- shahyasir443@gmail.com
