@@ -22,6 +22,10 @@ This project investigates that question using 400 sales transactions across 4 re
 - Columns: `OrderID`, `OrderDate`, `Region`, `Store`, `Category`, `SubCategory`, `Product`, `Channel`, `UnitsSold`, `UnitPrice`, `DiscountPct`, `Revenue`, `Profit`, `Returned`, `CustomerSatisfaction`, `CustomerID`, `PaymentMethod`
 - 4 Regions (North, South, East, West), 6 Stores, 3 Categories (Electronics, Furniture, Office Supplies)
 
+  **View DataSet**
+
+[Dataset](data\deepseek_csv_20260728_1955cb.txt)
+
 ---
 
 ## 🔎 Data Analytics Workflow
