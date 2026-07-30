@@ -157,7 +157,7 @@ Total Orders = DISTINCTCOUNT(retail_sales[OrderID])
 Return Rate = AVERAGE(retail_sales[ReturnFlag])
 Avg Satisfaction = AVERAGE(retail_sales[CustomerSatisfaction])
 ```
-*(`ReturnFlag` is a Power Query custom column: `if [Returned] = "Yes" then 1 else 0`)*
+*(`ReturnFlag` is a Power Query custom column: `if [returned] = "Yes" then 1 else 0`)*
 
 **View Screenshot**
 
