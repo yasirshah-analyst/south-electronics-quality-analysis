@@ -161,7 +161,7 @@ Avg Satisfaction = AVERAGE(retail_sales[CustomerSatisfaction])
 
 **View Screenshot**
 
-![Dashboard](dashboard/dashboard.png)
+[returnflag custom column](power_query/returnflag.png)
 
 **Layout:**
 - 4 KPI cards (company-wide, unfiltered): Total Revenue, Total Orders, Return Rate, Avg Satisfaction
@@ -170,9 +170,9 @@ Avg Satisfaction = AVERAGE(retail_sales[CustomerSatisfaction])
 - Chart 2: Return Rate & Satisfaction by Store, filtered to South + Electronics (the drill-down view)
 - Detail table: Region, Store, Category, Orders, Return Rate, Avg Satisfaction, Total Revenue (full evidence view, all data, no filters)
 
-### 📊 Dashboard
+**📊 Dashboard**
 
-![Dashboard](dashboard/screenshot/dashboard.png)
+![Dashboard](dashboard/dashboard.png)
 
 ---
 
