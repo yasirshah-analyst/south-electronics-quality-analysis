@@ -17,7 +17,7 @@ Built entirely using **PostgreSQL and Power BI** (without Excel), the project fo
 
 ## 🎯 Business Problem
 
-> While company-wide sales performance looks healthy on the surface, leadership wants to know whether that headline picture is hiding a real, localized operational issue — and if so, where it lives, how severe it is, and what's driving it.
+>While company-wide sales performance looks healthy on the surface, leadership wants to know whether that headline picture is hiding a real, localized operational issue — and if so, where it lives, how severe it is, and what's driving it.
 
 This project investigates that question using 400 sales transactions across 4 regions and 3 product categories.
 
