@@ -1,7 +1,22 @@
 # 📊 South Region Electronics: A Hidden Quality Problem
 
 ## 📌 Project Overview
+This project was developed as a **portfolio project** to demonstrate an end-to-end data analytics workflow while simulating a real-world business scenario.
 
+Rather than simply creating charts and reports, the project was designed from the perspective of a stakeholder requesting an investigation into unusually high return rates and declining customer satisfaction within a retail business. The goal was to move beyond descriptive reporting and provide actionable insights and recommendations that support decision-making.
+
+Most data analysis stops at answering **"What happened?"** This project follows the modern analytics process all the way through to **data storytelling**, answering:
+
+- What happened?
+- Why did it happen?
+- Why does it matter?
+- What actions should stakeholders take?
+
+Built entirely using **PostgreSQL and Power BI** (without Excel), the project follows a professional analyst workflow:
+
+**Business Problem → Data Cleaning → Data Modeling → SQL Analysis → DAX Measures → Interactive Dashboard → Stakeholder-Focused Insights & Recommendations**
+
+The final deliverable is an interactive dashboard and analytical report tailored to the needs of business stakeholders, demonstrating not only technical skills but also analytical thinking, problem-solving, and data-driven decision-making.
 Most data analysis stops at "what happened." This project follows the modern data analytics workflow all the way through to **data storytelling** — answering not just what happened, but why it happened, why it matters, and what each stakeholder should actually do about it.
 
 Built entirely with **SQL (PostgreSQL) + Power BI** — no Excel — following a professional analyst workflow: business question → data modeling → SQL analysis → DAX measures → interactive dashboard → stakeholder-specific recommendations.
@@ -17,6 +32,9 @@ This project investigates that question using 400 sales transactions across 4 re
 ---
 
 ## 🗂️ Dataset
+This project uses a **synthetic retail sales dataset** generated with the assistance of the **DeepSeek AI platform** for portfolio and learning purposes.
+
+The dataset was intentionally designed to simulate a realistic retail environment with return and customer satisfaction patterns suitable for SQL analysis, and Power BI dashboard development.
 
 - **400 order-level transactions**
 - Columns: `OrderID`, `OrderDate`, `Region`, `Store`, `Category`, `SubCategory`, `Product`, `Channel`, `UnitsSold`, `UnitPrice`, `DiscountPct`, `Revenue`, `Profit`, `Returned`, `CustomerSatisfaction`, `CustomerID`, `PaymentMethod`
