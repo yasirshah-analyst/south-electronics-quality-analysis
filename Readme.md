@@ -205,31 +205,31 @@ This isn't a recent trend to monitor — it's been present all year, hidden insi
 - Power BI (DAX measures, interactive dashboard)
 
 ## 📁 Project Structure
-```
-south-electronics-analysis/
-│
-├── sql/
-│   ├── analysis_queries.sql
-│   └── screenshot/
-│       ├── create_table.png
-│       ├── duplicate_removal.png
-│       ├── query1_region_category.png
-│       ├── query2_store_level.png
-│       ├── query3_category_check.png
-│       └── query4_monthly_trend.png
-│
-├── data/
-│   └── retail_sales_south_electronics.csv
-│
-├── powerbi/
-│   └── screenshot/
-│       └── returnflag_custom_column.png
+```text
+South-Electronics-Quality-Analysis
 │
 ├── dashboard/
-│   ├── south_electronics_dashboard.pbix
-│   └── screenshot/
-│       └── dashboard.png
+│   ├── dashboard content loaded
+│   ├── dashboard
+│   └── dashboard.png
 │
+├── data/
+│   └── deepseek_csv_20260728_1955cb.txt
+│
+├── power_query/
+│   └── returnflag.png
+│
+├── sql/
+│   ├── duplicate_removal.png
+│   └── retail_sales.sql
+│
+├── sql_outputs/
+│   ├── Query1.csv
+│   ├── Query2.csv
+│   ├── Query3.csv
+│   └── Query4.csv
+│
+├── clean_data.csv
 └── README.md
 ```
 
