@@ -165,7 +165,7 @@ Avg Satisfaction = AVERAGE(retail_sales[CustomerSatisfaction])
 
 **Layout:**
 - 4 KPI cards (company-wide, unfiltered): Total Revenue, Total Orders, Return Rate, Avg Satisfaction
-- Region slicer (does not affect KPI cards — they always show company-wide totals)
+- Region slicer
 - Chart 1: Return Rate & Satisfaction by Category × Region (the discovery view)
 - Chart 2: Return Rate & Satisfaction by Store, filtered to South + Electronics (the drill-down view)
 - Detail table: Region, Store, Category, Orders, Return Rate, Avg Satisfaction, Total Revenue (full evidence view, all data, no filters)
