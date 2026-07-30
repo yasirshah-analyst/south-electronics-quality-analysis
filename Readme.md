@@ -56,13 +56,6 @@ CREATE TABLE retail_sales (
 );
 ```
 
-<details>
-<summary>📸 Screenshot: table created in pgAdmin</summary>
-
-![Create Table](sql/screenshot/create_table.png)
-
-</details>
-
 ### 3️⃣ Data Cleaning (SQL)
 One exact duplicate transaction was found and removed:
 ```sql
@@ -81,12 +74,9 @@ WHERE order_id IN (
 );
 ```
 
-<details>
-<summary>📸 Screenshot: duplicate row identified and removed</summary>
+**View Screenshot**
 
-![Duplicate Removal](sql/screenshot/duplicate_removal.png)
-
-</details>
+[Duplicate Removal](sql/duplicate_removal.png)
 
 ### 4️⃣ Analysis (SQL) — the drill-down
 
@@ -102,12 +92,9 @@ ORDER BY return_rate_pct DESC;
 ```
 **Result:** South + Electronics = **93.5% return rate**. Every other region-category combination = **0%**.
 
-<details>
-<summary>📸 Screenshot: Query 1 result</summary>
+**View Output**
 
-![Query 1 Result](sql/screenshot/query1_region_category.png)
-
-</details>
+[Query 1 Result](sql_outputs/Query1.csv)
 
 **Query 2 — Narrow to Store level within South + Electronics**
 ```sql
@@ -122,12 +109,11 @@ ORDER BY return_rate_pct DESC;
 ```
 **Result:** Stores S002, S003, and S004 all show elevated return rates; S001/S005 have negligible Electronics volume.
 
-<details>
-<summary>📸 Screenshot: Query 2 result</summary>
+**View Output**
 
-![Query 2 Result](sql/screenshot/query2_store_level.png)
+[Query 2 Result](sql_outputs/Query2.csv)
 
-</details>
+
 
 **Query 3 — Confirm it's category-specific, not store-wide**
 ```sql
@@ -141,12 +127,9 @@ ORDER BY store, category;
 ```
 **Result:** The same South stores' Furniture and Office Supplies orders show a normal 0% return rate — confirming the issue is Electronics-specific, not a store-wide problem.
 
-<details>
-<summary>📸 Screenshot: Query 3 result</summary>
+**View Output**
 
-![Query 3 Result](sql/screenshot/query3_category_check.png)
-
-</details>
+[Query 3 Result](sql_outputs/Query3.csv)
 
 **Query 4 — Monthly trend (checking for a clean "before/after" cutoff)**
 ```sql
@@ -161,12 +144,9 @@ ORDER BY month;
 ```
 **Result:** No clean single starting point — the elevated return rate is present from the start of the data and persists throughout the year. **This is a sustained, ongoing issue, not a recent decline.**
 
-<details>
-<summary>📸 Screenshot: Query 4 result (monthly trend)</summary>
+**View Output**
 
-![Query 4 Result](sql/screenshot/query4_monthly_trend.png)
-
-</details>
+[Query 4 Result](sql_outputs/Query4.csv)
 
 ### 5️⃣ Dashboard (Power BI)
 
@@ -179,12 +159,9 @@ Avg Satisfaction = AVERAGE(retail_sales[CustomerSatisfaction])
 ```
 *(`ReturnFlag` is a Power Query custom column: `if [Returned] = "Yes" then 1 else 0`)*
 
-<details>
-<summary>📸 Screenshot: Power Query custom column (ReturnFlag)</summary>
+**View Screenshot**
 
-![ReturnFlag Custom Column](powerbi/screenshot/returnflag_custom_column.png)
-
-</details>
+![Dashboard](dashboard/dashboard.png)
 
 **Layout:**
 - 4 KPI cards (company-wide, unfiltered): Total Revenue, Total Orders, Return Rate, Avg Satisfaction
