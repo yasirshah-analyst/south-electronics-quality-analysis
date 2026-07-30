@@ -2,9 +2,6 @@
 
 ## 📌 Project Overview
 This project was developed as a **portfolio project** to demonstrate an end-to-end data analytics workflow while simulating a real-world business scenario.
-
-Rather than simply creating charts and reports, the project was designed from the perspective of a stakeholder requesting an investigation into unusually high return rates and declining customer satisfaction within a retail business. The goal was to move beyond descriptive reporting and provide actionable insights and recommendations that support decision-making.
-
 Most data analysis stops at answering **"What happened?"** This project follows the modern analytics process all the way through to **data storytelling**, answering:
 
 - What happened?
@@ -15,11 +12,6 @@ Most data analysis stops at answering **"What happened?"** This project follows 
 Built entirely using **PostgreSQL and Power BI** (without Excel), the project follows a professional analyst workflow:
 
 **Business Problem → Data Cleaning → Data Modeling → SQL Analysis → DAX Measures → Interactive Dashboard → Stakeholder-Focused Insights & Recommendations**
-
-The final deliverable is an interactive dashboard and analytical report tailored to the needs of business stakeholders, demonstrating not only technical skills but also analytical thinking, problem-solving, and data-driven decision-making.
-Most data analysis stops at "what happened." This project follows the modern data analytics workflow all the way through to **data storytelling** — answering not just what happened, but why it happened, why it matters, and what each stakeholder should actually do about it.
-
-Built entirely with **SQL (PostgreSQL) + Power BI** — no Excel — following a professional analyst workflow: business question → data modeling → SQL analysis → DAX measures → interactive dashboard → stakeholder-specific recommendations.
 
 ---
 
