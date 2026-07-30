@@ -24,7 +24,7 @@ This project investigates that question using 400 sales transactions across 4 re
 
   **View DataSet**
 
-[Dataset](data\deepseek_csv_20260728_1955cb.txt)
+[Dataset](data/deepseek_csv_20260728_1955cb.txt)
 
 ---
 
