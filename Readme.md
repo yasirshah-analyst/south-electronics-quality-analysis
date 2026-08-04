@@ -258,7 +258,9 @@ Avg Satisfaction = AVERAGE(retail_sales[CustomerSatisfaction])
 
 **📊 Dashboard**
 
-![Dashboard](dashboard/dashboard.png)
+![Dashboard page1](dashboard/dashboard.png)
+
+![Dashboard page2](dashboard/dashboard2.png)
 
 ---
 
