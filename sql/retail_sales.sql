@@ -61,10 +61,38 @@ where Region = 'South' and category = 'Electronics'
 group by date_trunc('month',orderdate)
 order by month;
 
-SELECT region,Store,category,SubCategory,Product,count(*) as orders,
-round(avg(case when Returned = 'Yes' then 1 else 0 end)*100,1)  as return_rate_pct,
-round(avg(CustomerSatisfaction),1) as avg_satisfaction
-from retail_sales
-group by region,Store,category,SubCategory,Product
-having count(*)>=5
-order by return_rate_pct desc;
+SELECT product, subcategory,
+       COUNT(*) AS orders,
+       ROUND(100.0 * SUM(CASE WHEN returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct,
+	   round(avg(CustomerSatisfaction),1) as avg_satisfaction
+FROM retail_sales
+WHERE region = 'South' AND category = 'Electronics'
+GROUP BY product, subcategory
+ORDER BY return_rate_pct DESC;
+
+SELECT 
+    CASE WHEN orderdate < '2025-07-01' THEN 'H1 2025' ELSE 'H2 2025' END AS half,
+    COUNT(*) AS orders,
+    ROUND(100.0 * SUM(CASE WHEN returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct,
+	round(avg(CustomerSatisfaction),1) as avg_satisfaction
+FROM retail_sales
+WHERE region = 'South' AND category = 'Electronics'
+GROUP BY CASE WHEN orderdate < '2025-07-01' THEN 'H1 2025' ELSE 'H2 2025' END;
+
+SELECT 
+    CASE WHEN discountpct >= 0.15 THEN 'High Discount (15%+)' ELSE 'Low Discount (<15%)' END AS discount_tier,
+    COUNT(*) AS orders,
+    ROUND(100.0 * SUM(CASE WHEN returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct,
+	round(avg(CustomerSatisfaction),1) as avg_satisfaction,
+    ROUND(AVG(unitprice), 2) AS avg_price
+FROM retail_sales
+WHERE region = 'South' AND category = 'Electronics'
+GROUP BY CASE WHEN discountpct >= 0.15 THEN 'High Discount (15%+)' ELSE 'Low Discount (<15%)' END;
+
+SELECT region, channel,
+       COUNT(*) AS orders,
+       ROUND(AVG(unitssold), 1) AS avg_units_per_order
+FROM retail_sales
+WHERE category = 'Electronics'
+GROUP BY region, channel
+ORDER BY region;
