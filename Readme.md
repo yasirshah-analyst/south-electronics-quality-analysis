@@ -141,7 +141,27 @@ ORDER BY store, category;
 
 [Query 3 Result](sql_outputs/Query3.csv)
 
-**Query 4 — Monthly trend (checking for a clean "before/after" cutoff)**
+---
+
+**Query 4 — Is it one specific product, or the whole category?**
+```sql
+SELECT subcategory, product,
+       COUNT(*) AS orders,
+       ROUND(100.0 * SUM(CASE WHEN returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct
+FROM retail_sales
+WHERE region = 'South' AND category = 'Electronics'
+GROUP BY subcategory, product
+ORDER BY return_rate_pct DESC;
+```
+**Result:** Every product is elevated — Wireless Headphones (96.7%), Smart Watch (95.0%), Bluetooth Speaker (92.9%), Smartphone Accessories (86.7%). This rules out a single defective product batch and points toward something affecting the entire Electronics line at these stores (e.g. fulfillment, storage, handling), not a manufacturing issue with one item.
+
+**View Output**
+
+[Query 4 Result](sql_outputs/Query5.csv)
+
+---
+
+**Query 5 — Monthly trend (checking for a clean "before/after" cutoff)**
 ```sql
 SELECT DATE_TRUNC('month', order_date) AS month,
        COUNT(*) AS orders,
@@ -156,7 +176,63 @@ ORDER BY month;
 
 **View Output**
 
-[Query 4 Result](sql_outputs/Query4.csv)
+[Query 5 Result](sql_outputs/Query4.csv)
+
+---
+
+**Query 6 — Is the trend improving or worsening?**
+```sql
+SELECT CASE WHEN order_date < '2025-07-01' THEN 'H1 2025' ELSE 'H2 2025' END AS period,
+       COUNT(*) AS orders,
+       ROUND(100.0 * SUM(CASE WHEN returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct
+FROM retail_sales
+WHERE region = 'South' AND category = 'Electronics'
+GROUP BY CASE WHEN order_date < '2025-07-01' THEN 'H1 2025' ELSE 'H2 2025' END;
+```
+**Result:** H1 2025: **84.2%** → H2 2025: **100.0%**. The problem is actively worsening, not stable or improving.
+
+**View Output**
+
+[Query 6 Result](sql_outputs/Query6.csv)
+
+---
+
+**Query 7 — Does price or discount level explain it?**
+```sql
+SELECT CASE WHEN discount_pct >= 0.15 THEN 'High Discount (15%+)' ELSE 'Low Discount (<15%)' END AS discount_tier,
+       COUNT(*) AS orders,
+       ROUND(100.0 * SUM(CASE WHEN returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct,
+       ROUND(AVG(unit_price), 2) AS avg_price
+FROM retail_sales
+WHERE region = 'South' AND category = 'Electronics'
+GROUP BY CASE WHEN discount_pct >= 0.15 THEN 'High Discount (15%+)' ELSE 'Low Discount (<15%)' END;
+```
+**Result:** Low discount: 75.0% return rate (avg price $73.12). High discount: 97.4% (avg price $86.48). Heavy discounting compounds the problem — but doesn't cause it: even the low-discount group sits at 75%, far above the 0% baseline everywhere else in the business.
+
+**View Output**
+
+[Query 7 Result](sql_outputs/Query7.csv)
+
+---
+
+**Query 8 — Is it a regional purchasing/channel behavior?**
+```sql
+SELECT region, channel,
+       COUNT(*) AS orders,
+       ROUND(AVG(units_sold), 1) AS avg_units_per_order
+FROM retail_sales
+WHERE category = 'Electronics'
+GROUP BY region, channel
+ORDER BY region;
+```
+**Result:** South is 73% online — but West is 96% online with a **0% return rate**, ruling out purchase channel as the explanation. Average order size is flat (4.0–5.7 units) across every region. This rules out a broader customer-behavior explanation and points back to something specific to South's stores or fulfillment operations.
+
+**View Output**
+
+[Query 8 Result](sql_outputs/Query8.csv)
+
+---
+
 
 ### 5️⃣ Dashboard (Power BI)
 
@@ -187,28 +263,43 @@ Avg Satisfaction = AVERAGE(retail_sales[CustomerSatisfaction])
 ---
 
 ## 📖 The Data Story
-
+ 
 ### 📌 What happened?
-South region's Electronics category has a **93.5% return rate** and **2.5/5 average customer satisfaction** — compared to a **0% return rate** and **4.2+ satisfaction** in every other region-category combination in the company.
-
-### 📌 Why did it happen?
-The problem is isolated to three specific South stores (S002, S003, S004) and only their **Electronics** transactions. The same stores' Furniture and Office Supplies orders perform normally, ruling out a store-wide operational issue.
-
+South region's Electronics category has a **93.5% return rate** and **2.5/5 average customer satisfaction** — compared to a **0% return rate** and **4.2+ satisfaction** in every other region-category combination in the company. Approximately **$28,134 in revenue (94.4% of the category's South revenue)** is tied to returned orders.
+ 
+### 📌 Where is it located? (established directly by the data)
+The problem is isolated to three specific South stores (S002, S003, S004) and only their **Electronics** transactions — the same stores' Furniture and Office Supplies orders perform normally, ruling out a store-wide operational issue. It is also **not** explained by:
+- **A single bad product** — every Electronics product shows an elevated return rate (86.7%–96.7%)
+- **Discounting alone** — even low-discount orders sit at 75%, far above the healthy baseline
+- **Purchase channel or buying behavior** — West is more online-skewed than South (96% vs 73%) yet shows 0% returns
+### 📌 Why is it happening? (hypothesis, not yet confirmed)
+The pattern — uniformly elevated across all products, worsening over time, unrelated to channel or discount level, confined to specific stores — is most consistent with a **fulfillment, handling, or storage issue specific to these three stores' Electronics operations**, rather than a single defective product or a broader customer-behavior pattern. **This dataset has no return-reason or feedback text field, so this remains the leading hypothesis, not a confirmed cause** — see Recommendations below for what would be needed to confirm it.
+ 
 ### 📌 Why does it matter?
-This isn't a recent trend to monitor — it's been present all year, hidden inside otherwise-healthy company-wide averages. Left unaddressed, it represents ongoing lost revenue (near-total refund rate on Electronics), wasted inventory, and reputational damage in a category customers won't trust again.
-
+This isn't a stable, ongoing issue to monitor calmly — it's **worsening**: return rate rose from **84.2% in H1 2025 to 100.0% in H2 2025**. Left unaddressed, it represents ~$28K in exposed revenue in this region alone, wasted inventory, and reputational damage in a category customers won't trust again.
+ 
 ### 📌 What should we do next?
-
+ 
 🎯 **Regional Director** — *"Is this hurting our overall South region results?"*
-→ Not at a region-wide level — Furniture and Office Supplies in South remain healthy. The exposure is fully contained to Electronics.
-
+→ Not at a region-wide level — Furniture and Office Supplies in South remain healthy. The exposure is fully contained to Electronics, but it's trending toward total failure in that category (100% return rate as of H2 2025).
+ 
 🎯 **Store Manager (S002/S003/S004)** — *"What's actually happening?"*
-→ A near-total return rate specifically on Electronics products, all year — this points to a supplier, fulfillment, or product-quality issue with the Electronics line at these three locations specifically, not a demand or pricing problem.
-
+→ Every Electronics product is affected equally, ruling out one bad item. The pattern points to something in how Electronics is stored, handled, or fulfilled at these three locations specifically — worth a physical audit of receiving/storage conditions before looking anywhere else.
+ 
 🎯 **Electronics Category Manager** — *"What should we do about it?"*
-→ This is not an emerging trend to watch — it's an existing, severe problem requiring immediate action: audit the Electronics supply chain feeding these three South stores now.
+→ Two actions: (1) begin capturing a return-reason code at point-of-return immediately — this is the single missing piece of data that would convert this from a hypothesis into a confirmed cause, and (2) audit fulfillment/handling at S002, S003, and S004 now, given the trend is worsening, not stable.
 
 ---
+
+## ✅ Recommendations
+
+- **Start recording return reasons** whenever a product is returned. This will help identify the exact cause of returns instead of relying on assumptions.
+
+- **Inspect Electronics operations at stores S002, S003, and S004**, including storage, handling, and delivery processes, since the return problem affects all products and is getting worse over time.
+
+- **Focus on store operations first** rather than supplier quality. Because all Electronics products are affected similarly, the issue is more likely related to handling, storage, or fulfillment processes than to a defect from a single supplier.
+
+- **Repeat the analysis after collecting return-reason data** to confirm the true root cause and support more targeted corrective actions.
 
 ## 🛠️ Tools Used
 - PostgreSQL (data modeling, cleaning, analysis)
