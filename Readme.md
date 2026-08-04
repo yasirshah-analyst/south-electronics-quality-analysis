@@ -46,23 +46,23 @@ The dataset was intentionally designed to simulate a realistic retail environmen
 ### 2️⃣ Data Modeling (SQL)
 ```sql
 CREATE TABLE retail_sales (
-    order_id VARCHAR(20),
-    order_date DATE,
-    region VARCHAR(20),
-    store VARCHAR(20),
-    category VARCHAR(30),
-    subcategory VARCHAR(30),
-    product VARCHAR(50),
-    channel VARCHAR(20),
-    units_sold INT,
-    unit_price DECIMAL(10,2),
-    discount_pct DECIMAL(5,2),
-    revenue DECIMAL(10,2),
-    profit DECIMAL(10,2),
-    returned VARCHAR(5),
-    customer_satisfaction DECIMAL(3,1),
-    customer_id VARCHAR(20),
-    payment_method VARCHAR(30)
+    OrderID VARCHAR(20),
+    OrderDate DATE,
+    Region VARCHAR(20),
+    Store VARCHAR(20),
+    Category VARCHAR(30),
+    Subcategory VARCHAR(30),
+    Product VARCHAR(50),
+    Channel VARCHAR(20),
+    UnitsSold INT,
+    UnitPrice DECIMAL(10,2),
+    DiscountPct DECIMAL(5,2),
+    Revenue DECIMAL(10,2),
+    Profit DECIMAL(10,2),
+    Returned VARCHAR(5),
+    CustomerSatisfaction DECIMAL(3,1),
+    CustomerID VARCHAR(20),
+    PaymentMethod VARCHAR(30)
 );
 ```
 
@@ -70,14 +70,14 @@ CREATE TABLE retail_sales (
 One exact duplicate transaction was found and removed:
 ```sql
 DELETE FROM retail_sales
-WHERE order_id IN (
-    SELECT order_id FROM (
-        SELECT order_id,
+WHERE OrderID IN (
+    SELECT OrderID FROM (
+        SELECT OrderID,
                ROW_NUMBER() OVER (
-                   PARTITION BY order_date, region, store, category, subcategory, product,
-                                channel, units_sold, unit_price, discount_pct, revenue, profit,
-                                returned, customer_satisfaction, customer_id, payment_method
-                   ORDER BY order_id
+                   PARTITION BY OrderDate, Region, Store, Category, SubCategory, Product,
+                                Channel, UnitsSold, UnitPrice, DiscountPct, Revenue, Profit,
+                                Returned, CustomerSatisfaction, CustomerID, PaymentMethod
+                   ORDER BY OrderID
                ) AS rn
         FROM retail_sales
     ) t WHERE rn > 1
@@ -92,12 +92,12 @@ WHERE order_id IN (
 
 **Query 1 — Broad scan across every Region × Category (find the outlier honestly, don't assume it)**
 ```sql
-SELECT region, category,
+SELECT Region, Category,
        COUNT(*) AS orders,
-       ROUND(AVG(CASE WHEN returned='Yes' THEN 1.0 ELSE 0 END)*100, 1) AS return_rate_pct,
-       ROUND(AVG(customer_satisfaction), 1) AS avg_satisfaction
+       ROUND(AVG(CASE WHEN Returned='Yes' THEN 1.0 ELSE 0 END)*100, 1) AS return_rate_pct,
+       ROUND(AVG(CustomerSatisfaction), 1) AS avg_satisfaction
 FROM retail_sales
-GROUP BY region, category
+GROUP BY Region, Category
 ORDER BY return_rate_pct DESC;
 ```
 **Result:** South + Electronics = **93.5% return rate**. Every other region-category combination = **0%**.
@@ -108,13 +108,13 @@ ORDER BY return_rate_pct DESC;
 
 **Query 2 — Narrow to Store level within South + Electronics**
 ```sql
-SELECT store,
+SELECT Store,
        COUNT(*) AS orders,
-       ROUND(AVG(CASE WHEN returned='Yes' THEN 1.0 ELSE 0 END)*100, 1) AS return_rate_pct,
-       ROUND(AVG(customer_satisfaction), 1) AS avg_satisfaction
+       ROUND(AVG(CASE WHEN Returned='Yes' THEN 1.0 ELSE 0 END)*100, 1) AS return_rate_pct,
+       ROUND(AVG(CustomerSatisfaction), 1) AS avg_satisfaction
 FROM retail_sales
-WHERE region = 'South' AND category = 'Electronics'
-GROUP BY store
+WHERE Region = 'South' AND Category = 'Electronics'
+GROUP BY Store
 ORDER BY return_rate_pct DESC;
 ```
 **Result:** Stores S002, S003, and S004 all show elevated return rates; S001/S005 have negligible Electronics volume.
@@ -127,13 +127,13 @@ ORDER BY return_rate_pct DESC;
 
 **Query 3 — Confirm it's category-specific, not store-wide**
 ```sql
-SELECT store, category,
+SELECT Store, Category,
        COUNT(*) AS orders,
-       ROUND(AVG(CASE WHEN returned='Yes' THEN 1.0 ELSE 0 END)*100, 1) AS return_rate_pct
+       ROUND(AVG(CASE WHEN Returned='Yes' THEN 1.0 ELSE 0 END)*100, 1) AS return_rate_pct
 FROM retail_sales
-WHERE region = 'South'
-GROUP BY store, category
-ORDER BY store, category;
+WHERE Region = 'South'
+GROUP BY Store, Category
+ORDER BY Store, Category;
 ```
 **Result:** The same South stores' Furniture and Office Supplies orders show a normal 0% return rate — confirming the issue is Electronics-specific, not a store-wide problem.
 
@@ -145,12 +145,12 @@ ORDER BY store, category;
 
 **Query 4 — Is it one specific product, or the whole category?**
 ```sql
-SELECT subcategory, product,
+SELECT Subcategory, Product,
        COUNT(*) AS orders,
-       ROUND(100.0 * SUM(CASE WHEN returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct
+       ROUND(100.0 * SUM(CASE WHEN Returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct
 FROM retail_sales
-WHERE region = 'South' AND category = 'Electronics'
-GROUP BY subcategory, product
+WHERE Region = 'South' AND Category = 'Electronics'
+GROUP BY SubCategory, Product
 ORDER BY return_rate_pct DESC;
 ```
 **Result:** Every product is elevated — Wireless Headphones (96.7%), Smart Watch (95.0%), Bluetooth Speaker (92.9%), Smartphone Accessories (86.7%). This rules out a single defective product batch and points toward something affecting the entire Electronics line at these stores (e.g. fulfillment, storage, handling), not a manufacturing issue with one item.
@@ -163,13 +163,13 @@ ORDER BY return_rate_pct DESC;
 
 **Query 5 — Monthly trend (checking for a clean "before/after" cutoff)**
 ```sql
-SELECT DATE_TRUNC('month', order_date) AS month,
+SELECT DATE_TRUNC('month', OrderDate) AS month,
        COUNT(*) AS orders,
-       ROUND(AVG(CASE WHEN returned='Yes' THEN 1.0 ELSE 0 END)*100, 1) AS return_rate_pct,
-       ROUND(AVG(customer_satisfaction), 1) AS avg_satisfaction
+       ROUND(AVG(CASE WHEN Returned='Yes' THEN 1.0 ELSE 0 END)*100, 1) AS return_rate_pct,
+       ROUND(AVG(CustomerSatisfaction), 1) AS avg_satisfaction
 FROM retail_sales
-WHERE region = 'South' AND category = 'Electronics'
-GROUP BY DATE_TRUNC('month', order_date)
+WHERE Region = 'South' AND Category = 'Electronics'
+GROUP BY DATE_TRUNC('month', OrderDate)
 ORDER BY month;
 ```
 **Result:** No clean single starting point — the elevated return rate is present from the start of the data and persists throughout the year. **This is a sustained, ongoing issue, not a recent decline.**
@@ -182,12 +182,12 @@ ORDER BY month;
 
 **Query 6 — Is the trend improving or worsening?**
 ```sql
-SELECT CASE WHEN order_date < '2025-07-01' THEN 'H1 2025' ELSE 'H2 2025' END AS period,
+SELECT CASE WHEN OrderDate < '2025-07-01' THEN 'H1 2025' ELSE 'H2 2025' END AS period,
        COUNT(*) AS orders,
-       ROUND(100.0 * SUM(CASE WHEN returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct
+       ROUND(100.0 * SUM(CASE WHEN Returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct
 FROM retail_sales
-WHERE region = 'South' AND category = 'Electronics'
-GROUP BY CASE WHEN order_date < '2025-07-01' THEN 'H1 2025' ELSE 'H2 2025' END;
+WHERE Region = 'South' AND Category = 'Electronics'
+GROUP BY CASE WHEN OrderDate < '2025-07-01' THEN 'H1 2025' ELSE 'H2 2025' END;
 ```
 **Result:** H1 2025: **84.2%** → H2 2025: **100.0%**. The problem is actively worsening, not stable or improving.
 
@@ -199,13 +199,13 @@ GROUP BY CASE WHEN order_date < '2025-07-01' THEN 'H1 2025' ELSE 'H2 2025' END;
 
 **Query 7 — Does price or discount level explain it?**
 ```sql
-SELECT CASE WHEN discount_pct >= 0.15 THEN 'High Discount (15%+)' ELSE 'Low Discount (<15%)' END AS discount_tier,
+SELECT CASE WHEN DiscountPct >= 0.15 THEN 'High Discount (15%+)' ELSE 'Low Discount (<15%)' END AS discount_tier,
        COUNT(*) AS orders,
-       ROUND(100.0 * SUM(CASE WHEN returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct,
-       ROUND(AVG(unit_price), 2) AS avg_price
+       ROUND(100.0 * SUM(CASE WHEN Returned='Yes' THEN 1 ELSE 0 END) / COUNT(*), 1) AS return_rate_pct,
+       ROUND(AVG(UnitPrice), 2) AS avg_price
 FROM retail_sales
-WHERE region = 'South' AND category = 'Electronics'
-GROUP BY CASE WHEN discount_pct >= 0.15 THEN 'High Discount (15%+)' ELSE 'Low Discount (<15%)' END;
+WHERE Region = 'South' AND Category = 'Electronics'
+GROUP BY CASE WHEN DiscountPct >= 0.15 THEN 'High Discount (15%+)' ELSE 'Low Discount (<15%)' END;
 ```
 **Result:** Low discount: 75.0% return rate (avg price $73.12). High discount: 97.4% (avg price $86.48). Heavy discounting compounds the problem — but doesn't cause it: even the low-discount group sits at 75%, far above the 0% baseline everywhere else in the business.
 
@@ -217,13 +217,13 @@ GROUP BY CASE WHEN discount_pct >= 0.15 THEN 'High Discount (15%+)' ELSE 'Low Di
 
 **Query 8 — Is it a regional purchasing/channel behavior?**
 ```sql
-SELECT region, channel,
+SELECT Region, Channel,
        COUNT(*) AS orders,
-       ROUND(AVG(units_sold), 1) AS avg_units_per_order
+       ROUND(AVG(UnitsSold), 1) AS avg_units_per_order
 FROM retail_sales
-WHERE category = 'Electronics'
-GROUP BY region, channel
-ORDER BY region;
+WHERE Category = 'Electronics'
+GROUP BY Region, Channel
+ORDER BY Region;
 ```
 **Result:** South is 73% online — but West is 96% online with a **0% return rate**, ruling out purchase channel as the explanation. Average order size is flat (4.0–5.7 units) across every region. This rules out a broader customer-behavior explanation and points back to something specific to South's stores or fulfillment operations.
 
