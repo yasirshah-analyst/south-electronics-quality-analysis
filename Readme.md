@@ -306,33 +306,40 @@ This isn't a stable, ongoing issue to monitor calmly — it's **worsening**: ret
 - Power BI (DAX measures, interactive dashboard)
 
 ## 📁 Project Structure
-```text
-South-Electronics-Quality-Analysis
-│
-├── dashboard/
-│   ├── dashboard content loaded
-│   ├── dashboard
-│   └── dashboard.png
-│
-├── data/
-│   └── deepseek_csv_20260728_1955cb.txt
-│
-├── power_query/
-│   └── returnflag.png
+```
+south-electronics-analysis/
 │
 ├── sql/
-│   ├── duplicate_removal.png
-│   └── retail_sales.sql
+│   ├── analysis_queries.sql
+│   └── screenshot/
+│       ├── create_table.png
+│       ├── duplicate_removal.png
+│       ├── query1_region_category.png
+│       ├── query2_store_level.png
+│       ├── query3_category_check.png
+│       ├── query4_monthly_trend.png
+│       ├── query5_product_level.png
+│       ├── query6_trend_half.png
+│       ├── query7_discount_tier.png
+│       └── query8_regional_channel.png
 │
-├── sql_outputs/
-│   ├── Query1.csv
-│   ├── Query2.csv
-│   ├── Query3.csv
-│   └── Query4.csv
+├── data/
+│   └── retail_sales_south_electronics.csv
 │
-├── clean_data.csv
+├── powerbi/
+│   └── screenshot/
+│       └── returnflag_custom_column.png
+│
+├── dashboard/
+│   ├── south_electronics_dashboard.pbix
+│   └── screenshot/
+│       ├── dashboard_page1.png
+│       └── dashboard_page2.png
+│
 └── README.md
 ```
+---
+
 ## 👤 Author
 
 Yasir Shah | Data Analyst | SQL | Power BI | Excel
