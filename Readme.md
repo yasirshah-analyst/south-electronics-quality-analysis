@@ -242,6 +242,7 @@ Total Revenue = SUM(retail_sales[Revenue])
 Total Orders = DISTINCTCOUNT(retail_sales[OrderID])
 Return Rate = AVERAGE(retail_sales[ReturnFlag])
 Avg Satisfaction = AVERAGE(retail_sales[CustomerSatisfaction])
+Online Share = DIVIDE(CALCULATE(COUNTROWS(retail_sales), retail_sales[Channel] = "Online"),COUNTROWS(retail_sales))
 ```
 *(`ReturnFlag` is a Power Query custom column: `if [returned] = "Yes" then 1 else 0`)*
 
