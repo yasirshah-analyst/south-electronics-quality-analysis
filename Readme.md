@@ -236,6 +236,12 @@ ORDER BY Region;
 
 ### 5️⃣ Dashboard (Power BI)
 
+**Additional Calculated Columns (DAX):**
+```DAX
+DiscountTier = IF(retail_sales[DiscountPct] >= 0.15,"High Discount (15%+)","Low Discount (<15%)")
+Period = IF('retail_sales'[OrderDate] < DATE(2025,7,1),"H1 2025","H2 2025")
+```
+
 **DAX Measures:**
 ```DAX
 Total Revenue = SUM(retail_sales[Revenue])
@@ -250,12 +256,28 @@ Online Share = DIVIDE(CALCULATE(COUNTROWS(retail_sales), retail_sales[Channel] =
 
 [returnflag custom column](power_query/returnflag.png)
 
-**Layout:**
+**Page 1 Layout:**
 - 4 KPI cards (company-wide, unfiltered): Total Revenue, Total Orders, Return Rate, Avg Satisfaction
 - Region slicer
 - Chart 1: Return Rate & Satisfaction by Category × Region (the discovery view)
 - Chart 2: Return Rate & Satisfaction by Store, filtered to South + Electronics (the drill-down view)
 - Detail table: Region, Store, Category, Orders, Return Rate, Avg Satisfaction, Total Revenue (full evidence view, all data, no filters)
+
+**Page 2 Layout:**
+
+- Chart 1: Return Rate & Avg Satisfaction by Product (South + Electronics) — rules out a single bad SKU; every product line is affected
+- Chart 2: Return Rate & Avg Satisfaction by Period, H1 vs H2 2025 — tests whether the problem is stabilizing or worsening
+- Chart 3: Return Rate & Avg Satisfaction by Discount Tier — tests whether heavy discounting is the root cause
+- Chart 4: Online Share & Return Rate by Region — tests whether channel mix (online vs. in-store) explains the pattern
+- Data limitation note: the dataset has no return-reason field, so the underlying mechanism can't be confirmed from data alone — flagged for the Recommendations section
+
+**What Page 2 rules in and out:**
+
+- ❌ **Not a bad product** — Wireless Headphones, Smart Watch, Bluetooth Speaker, and Smartphone Accessories all show elevated return rates; no single item is the outlier.
+- ⚠️ **Not improving** — return rate rose from 84% to 100% between H1 and H2 2025 while avg satisfaction kept falling.
+- ⚠️ **Discounting is a contributing factor, not the cause** — high-discount orders return more, but low-discount orders still return at a high rate.
+- ❌ **Not an online-channel effect** — West has a higher online share than South but a 0% return rate, ruling out "online orders return more" as the explanation.
+- 🧩 **Open question** — with no return-reason field in the data, the actual mechanism (defective units, fulfillment issue, supplier quality) can't be confirmed from the dashboard alone and is called out as a next step for stakeholders.
 
 **📊 Dashboard**
 
