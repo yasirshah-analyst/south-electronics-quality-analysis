@@ -290,7 +290,7 @@ Online Share = DIVIDE(CALCULATE(COUNTROWS(retail_sales), retail_sales[Channel] =
 ## 📖 The Data Story
  
 ### 📌 What happened?
-South region's Electronics category has a **93.5% return rate** and **2.5/5 average customer satisfaction** — compared to a **0% return rate** and **4.2+ satisfaction** in every other region-category combination in the company. Approximately **$28,134 in revenue (94.4% of the category's South revenue)** is tied to returned orders.
+South region's Electronics category has a **93.5% return rate** and **2.5/5 average customer satisfaction** — compared to a **0% return rate** and **4.2+ satisfaction** in every other region-category combination in the company.
  
 ### 📌 Where is it located? (established directly by the data)
 The problem is isolated to three specific South stores (S002, S003, S004) and only their **Electronics** transactions — the same stores' Furniture and Office Supplies orders perform normally, ruling out a store-wide operational issue. It is also **not** explained by:
