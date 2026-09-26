@@ -1,27 +1,46 @@
-# 📊 South Region Electronics: A Hidden Quality Problem
+# Diagnosing a 93.5% Return Rate: Isolating a Hidden Electronics Quality Problem to 3 South Region Stores
 
-## 📌 Project Overview
-This project was developed as a **portfolio project** to demonstrate an end-to-end data analytics workflow while simulating a real-world business scenario.
-Most data analysis stops at answering **"What happened?"** This project follows the modern analytics process all the way through to **data storytelling**, answering:
-
-- What happened?
-- Why did it happen?
-- Why does it matter?
-- What actions should stakeholders take?
-
-Built entirely using **PostgreSQL and Power BI** (without Excel), the project follows a professional analyst workflow:
-
-**Business Problem → Data Cleaning → Data Modeling → SQL Analysis → DAX Measures → Interactive Dashboard → Stakeholder-Focused Insights & Recommendations**
-
----
-
-## 🎯 Business Problem
-
+## Executive Summary
+ 
+### Business Question
+ 
 >While company-wide sales performance looks healthy on the surface, leadership wants to know whether that headline picture is hiding a real, localized operational issue — and if so, where it lives, how severe it is, and what's driving it.
 
-This project investigates that question using 400 sales transactions across 4 regions and 3 product categories.
+### Trade-offs & Assumptions
+ 
+- The project uses a synthetic dataset generated with assistance from the **DeepSeek AI platform**.
+- The dataset contains 400 order-level transactions.
+- Return rate is calculated using the `Returned` field.
+- Customer satisfaction is analyzed as an indicator of customer experience.
+- The analysis identifies patterns and likely causes but cannot prove causation.
+- The missing return-reason field limits the ability to confirm the operational cause.
 
+### Key Insights
+ 
+South region Electronics has a **93.5% return rate** and **2.5/5 average customer satisfaction**, compared with a **0% return rate** and **4.2+ satisfaction** across every other region-category combination.
+ 
+The problem is isolated to stores **S002, S003, and S004** and affects every Electronics product. The return rate increased from **84.2% in H1 2025 to 100.0% in H2 2025**, showing that the issue is worsening.
+ 
+The analysis rules out:
+ 
+- A single defective product
+- A store-wide problem
+- Discounting as the sole cause
+- Online purchasing behavior as the main explanation
+Because the dataset does not include return-reason data, the leading hypothesis is a **fulfillment, handling, or storage issue affecting Electronics operations at the three stores**. This remains a hypothesis rather than a confirmed cause.
+
+### Recommendations
+ 
+- **Start recording return reasons** whenever a product is returned. This will help identify the exact cause of returns instead of relying on assumptions.
+- **Inspect Electronics operations at stores S002, S003, and S004**, including storage, handling, and delivery processes, since the return problem affects all products and is getting worse over time.
+- **Repeat the analysis after collecting return-reason data** to confirm the true root cause and support more targeted corrective actions.
 ---
+
+**Dashboard**
+
+![Dashboard page1](dashboard/dashboard.png)
+
+![Dashboard page2](dashboard/dashboard2.png)
 
 ## 🗂️ Dataset
 This project uses a **synthetic retail sales dataset** generated with the assistance of the **DeepSeek AI platform** for portfolio and learning purposes.
@@ -36,14 +55,9 @@ The dataset was intentionally designed to simulate a realistic retail environmen
 
 [Dataset](data/deepseek_csv_20260728_1955cb.txt)
 
----
+## Methodology
 
-## 🔎 Data Analytics Workflow
-
-### 1️⃣ Ask
-**Business Question:** Is there a hidden performance problem inside our sales data, and if so, where does it live and why?
-
-### 2️⃣ Data Modeling (SQL)
+### 1 Data Modeling (SQL)
 ```sql
 CREATE TABLE retail_sales (
     OrderID VARCHAR(20),
@@ -66,7 +80,7 @@ CREATE TABLE retail_sales (
 );
 ```
 
-### 3️⃣ Data Cleaning (SQL)
+### 2 Data Cleaning (SQL)
 One exact duplicate transaction was found and removed:
 ```sql
 DELETE FROM retail_sales
@@ -88,7 +102,7 @@ WHERE OrderID IN (
 
 [Duplicate Removal](sql/duplicate_removal.png)
 
-### 4️⃣ Analysis (SQL) — the drill-down
+### 3 Analysis (SQL) — the drill-down
 
 **Query 1 — Broad scan across every Region × Category (find the outlier honestly, don't assume it)**
 ```sql
@@ -234,7 +248,7 @@ ORDER BY Region;
 ---
 
 
-### 5️⃣ Dashboard (Power BI)
+### 4 Dashboard (Power BI)
 
 **Additional Calculated Columns (DAX):**
 ```DAX
@@ -278,53 +292,6 @@ Online Share = DIVIDE(CALCULATE(COUNTROWS(retail_sales), retail_sales[Channel] =
 - ⚠️ **Discounting is a contributing factor, not the cause** — high-discount orders return more, but low-discount orders still return at a high rate.
 - ❌ **Not an online-channel effect** — West has a higher online share than South but a 0% return rate, ruling out "online orders return more" as the explanation.
 - 🧩 **Open question** — with no return-reason field in the data, the actual mechanism (defective units, fulfillment issue, supplier quality) can't be confirmed from the dashboard alone and is called out as a next step for stakeholders.
-
-**📊 Dashboard**
-
-![Dashboard page1](dashboard/dashboard.png)
-
-![Dashboard page2](dashboard/dashboard2.png)
-
----
-
-## 📖 The Data Story
- 
-### 📌 What happened?
-South region's Electronics category has a **93.5% return rate** and **2.5/5 average customer satisfaction** — compared to a **0% return rate** and **4.2+ satisfaction** in every other region-category combination in the company.
- 
-### 📌 Where is it located? (established directly by the data)
-The problem is isolated to three specific South stores (S002, S003, S004) and only their **Electronics** transactions — the same stores' Furniture and Office Supplies orders perform normally, ruling out a store-wide operational issue. It is also **not** explained by:
-- **A single bad product** — every Electronics product shows an elevated return rate (86.7%–96.7%)
-- **Discounting alone** — even low-discount orders sit at 75%, far above the healthy baseline
-- **Purchase channel or buying behavior** — West is more online-skewed than South (96% vs 73%) yet shows 0% returns
-### 📌 Why is it happening? (hypothesis, not yet confirmed)
-The pattern — uniformly elevated across all products, worsening over time, unrelated to channel or discount level, confined to specific stores — is most consistent with a **fulfillment, handling, or storage issue specific to these three stores' Electronics operations**, rather than a single defective product or a broader customer-behavior pattern. **This dataset has no return-reason or feedback text field, so this remains the leading hypothesis, not a confirmed cause** — see Recommendations below for what would be needed to confirm it.
- 
-### 📌 Why does it matter?
-This isn't a stable, ongoing issue to monitor calmly — it's **worsening**: return rate rose from **84.2% in H1 2025 to 100.0% in H2 2025**. Left unaddressed, it represents ~$28K in exposed revenue in this region alone, wasted inventory, and reputational damage in a category customers won't trust again.
- 
-### 📌 What should we do next?
- 
-🎯 **Regional Director** — *"Is this hurting our overall South region results?"*
-→ Not at a region-wide level — Furniture and Office Supplies in South remain healthy. The exposure is fully contained to Electronics, but it's trending toward total failure in that category (100% return rate as of H2 2025).
- 
-🎯 **Store Manager (S002/S003/S004)** — *"What's actually happening?"*
-→ Every Electronics product is affected equally, ruling out one bad item. The pattern points to something in how Electronics is stored, handled, or fulfilled at these three locations specifically — worth a physical audit of receiving/storage conditions before looking anywhere else.
- 
-🎯 **Electronics Category Manager** — *"What should we do about it?"*
-→ Two actions: (1) begin capturing a return-reason code at point-of-return immediately — this is the single missing piece of data that would convert this from a hypothesis into a confirmed cause, and (2) audit fulfillment/handling at S002, S003, and S004 now, given the trend is worsening, not stable.
-
----
-
-## ✅ Recommendations
-
-- **Start recording return reasons** whenever a product is returned. This will help identify the exact cause of returns instead of relying on assumptions.
-
-- **Inspect Electronics operations at stores S002, S003, and S004**, including storage, handling, and delivery processes, since the return problem affects all products and is getting worse over time.
-
-- **Focus on store operations first** rather than supplier quality. Because all Electronics products are affected similarly, the issue is more likely related to handling, storage, or fulfillment processes than to a defect from a single supplier.
-
-- **Repeat the analysis after collecting return-reason data** to confirm the true root cause and support more targeted corrective actions.
 
 ## 🛠️ Tools Used
 - PostgreSQL (data modeling, cleaning, analysis)
@@ -370,5 +337,3 @@ south-electronics-analysis/
 Yasir Shah | Data Analyst | SQL | Power BI | Excel
 
 - www.linkedin.com/in/yasir-shah-2364183b3
-- https://github.com/yasirshah-analyst
-- shahyasir443@gmail.com
